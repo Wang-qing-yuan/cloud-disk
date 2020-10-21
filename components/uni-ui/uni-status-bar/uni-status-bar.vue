@@ -1,3 +1,4 @@
+<!-- 上方留空 -->
 <template>
 	<view :style="{ height: statusBarHeight }" class="uni-status-bar">
 		<slot />
