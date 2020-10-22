@@ -5,8 +5,8 @@
 			<text class="font-md">{{item.name}}</text>
 			<text class="font-sm text-muted">{{item.create_time}}</text>
 		</view>
-		<view class="ml-auto flex align-center justify-center" style="width: 70rpx; height: 70rpx;">
-			<text v-if="!item.checked" style="height: 25rpx; width: 25rpx;" class="rounded-circle border"></text>
+		<view class="ml-auto flex align-center justify-center" style="width: 70rpx; height: 70rpx;" @click.stop="select">
+			<text v-if="!item.checked" style="height: 25rpx; width: 25rpx;" class="rounded-circle border border-dark"></text>
 			<text v-else class="iconfont icon-xuanze-yixuan text-primary" style="font-size: 40rpx;"></text>
 		</view>
 	</view>
@@ -44,6 +44,14 @@
 			iconClass() {
 				let item = icons[this.item.type];
 				return `${item.icon} ${item.color}`;
+			}
+		},
+		methods:{
+			select() {
+				this.$emit('select', {
+					index: this.index,
+					value: !this.item.checked
+				});
 			}
 		}
 	}

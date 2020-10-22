@@ -11,7 +11,7 @@
 	
    <view class="bg-light" style="height: 1000px;">
 		<uni-search-bar radius="100" placeholder="搜索网盘文件"></uni-search-bar>
-		<block v-for="(item, index) in list" :key="index"><f-list :item="item" :index="index"></f-list></block>
+		<block v-for="(item, index) in list" :key="index"><f-list :item="item" :index="index" @select="select"></f-list></block>
 	</view>
   </view>
 </template>
@@ -61,8 +61,32 @@ export default {
 						]
 	};
   },
-  onLoad() {},
-  methods: {}
+  onLoad() {
+	  uni.request({
+	  	url:'http://localhost:7001/list',
+		method:'GET',
+		success: res => {
+			console.log(res.data)
+		}
+	  })
+  },
+  
+  methods: {
+	  select(e){
+		  //接受到子组件传递过来的索引选中状态，将对应的List种得数据更新
+		  this.list[e.index].checked = e.value
+	  }
+  },
+  comments:{
+	  //选中列表
+	  checkList() {
+		  return this.list.filter(item => item.checked);
+	  },
+	  //选中数量
+	  checkCount() {
+		  return this.checkList.length;
+	  }
+  }
 };
 </script>
 
