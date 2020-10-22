@@ -50,7 +50,19 @@
 			</view>
 	
 	<!-- 是否要删除 -->
-	<f-dialog ref="dialog">是否删除选中的文件？</f-dialog>
+	<f-dialog ref="delete">是否删除选中的文件？</f-dialog>
+	
+	<!-- 重命名，通过ref定义不同的对话框对象，不同操作弹出的diolog的不同的对象 -->
+	<f-dialog ref="rename">
+		<input
+		 type="text"
+		 v-model="renameValue"
+		 class="flex-1 bg-light rounded px-2"
+		 style="height: 95rpx;"
+		 placeholder="重命名"
+		 />
+	</f-dialog>
+	
   </view>
 </template>
 
@@ -68,6 +80,7 @@
     },
     data() {
       return {
+		  renameValue: '',
         list: [{
             type: 'dir',
             name: '我的笔记',
@@ -116,10 +129,15 @@
 	  handleBottomEvent(item) {
 	  			switch (item.name) {
 	  				case '删除':
-	  					this.$refs.dialog.open(close => {
+	  					this.$refs.delete.open(close => {
+							this.list = this.list.fllter(item => !item.checked);
 	  						close();
-	  						console.log('删除文件');
-	  						console.log(this.checkList);
+							uni.showToast({
+								title:'删除成功',
+								icon:'none'
+							});
+	  						// console.log('删除文件');
+	  						// console.log(this.checkList);
 	  					});
 	  					break;
 	  				default:
