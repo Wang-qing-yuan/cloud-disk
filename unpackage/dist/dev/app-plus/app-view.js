@@ -332,7 +332,52 @@ var render = function() {
           })
         ],
         2
-      )
+      ),
+      _vm._$g(16, "i")
+        ? _c(
+            "v-uni-view",
+            { attrs: { _i: 16 } },
+            [
+              _c("v-uni-view", {
+                staticStyle: { height: "115rpx" },
+                attrs: { _i: 17 }
+              }),
+              _c(
+                "v-uni-view",
+                {
+                  staticClass: _vm._$g(18, "sc"),
+                  staticStyle: { height: "115rpx" },
+                  attrs: { _i: 18 }
+                },
+                _vm._l(_vm._$g(19, "f"), function(item, index, $21, $31) {
+                  return _c(
+                    "v-uni-view",
+                    {
+                      key: item,
+                      staticClass: _vm._$g("19-" + $31, "sc"),
+                      staticStyle: { "line-height": "1.5" },
+                      attrs: {
+                        "hover-class": "bg-hover-primary",
+                        _i: "19-" + $31
+                      }
+                    },
+                    [
+                      _c("v-uni-text", {
+                        staticClass: _vm._$g("20-" + $31, "sc"),
+                        class: _vm._$g("20-" + $31, "c"),
+                        attrs: { _i: "20-" + $31 }
+                      }),
+                      _vm._v(_vm._$g("19-" + $31, "t1-0"))
+                    ],
+                    1
+                  )
+                }),
+                1
+              )
+            ],
+            1
+          )
+        : _vm._e()
     ],
     1
   )

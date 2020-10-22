@@ -28,6 +28,26 @@
       <uni-search-bar :radius="100"></uni-search-bar>
       <f-list v-for="(item, index) in list" :key="index" :item="item" :index="index" @select="select"></f-list>
     </view>
+	
+	<!-- 底部操作条 -->
+			<!-- 选中个数大于0才会出现操作条 -->
+			<view v-if="checkCount > 0">
+				<!-- 这里要留一定高度，因为底部操作条需要被固定在底部，并空出底部tabbar高度的地方 -->
+				<view style="height: 115rpx;"></view>
+				<view style="height: 115rpx;" class="flex align-center bg-primary text-white fixed-bottom">
+					<view
+						class="flex-1 flex flex-column align-center justify-center"
+						style="line-height: 1.5;"
+						v-for="(item, index) in actions"
+						:key="index"
+						hover-class="bg-hover-primary"
+					>
+						<text class="iconfont" :class="item.icon"></text>
+						{{ item.name }}
+					</view>
+				</view>
+			</view>
+	
   </view>
 </template>
 
@@ -112,6 +132,15 @@
         return [{
           icon:"icon-xiazai",
           name:"下载"
+        },{
+          icon:"icon-fenxiang-1",
+          name:"分享"
+        },{
+          icon:"icon-shanchu",
+          name:"删除"
+        },{
+          icon:"icon-chongmingming",
+          name:"重命名"
         }]
       }
     }
