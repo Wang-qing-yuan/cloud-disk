@@ -100,8 +100,8 @@ export default {
 				{
 					type: 'dir',
 					name: '我的笔记',
-					// create_time: '2020-10-21 08:00',
-					data: 'https://kkkksslls.oss-cn-beijing.aliyuncs.com/campus/积分.png',
+					create_time: '2020-10-21 08:00',
+					//data: 'https://kkkksslls.oss-cn-beijing.aliyuncs.com/campus/积分.png',
 					checked: false
 				},
 				{
@@ -114,15 +114,15 @@ export default {
 				{
 					type: 'video',
 					name: 'uniapp实战教程.mp4',
-					data: 'https://kkkksslls.oss-cn-beijing.aliyuncs.com/campus/积分.png',
+					data: 'https://kkkksslls.oss-cn-beijing.aliyuncs.com/disk/%E7%90%86%E6%83%B3%E4%B8%89%E6%97%AC.mp4',
 					// create_time: '2020-10-21 08:00',
 					checked: false
 				},
 				{
 					type: 'text',
 					name: '记事本.txt',
-					data: 'https://kkkksslls.oss-cn-beijing.aliyuncs.com/campus/积分.png',
-					// create_time: '2020-10-21 08:00',
+					// data: 'https://kkkksslls.oss-cn-beijing.aliyuncs.com/campus/积分.png',
+					create_time: '2020-10-21 08:00',
 					checked: false
 				},
 				{
