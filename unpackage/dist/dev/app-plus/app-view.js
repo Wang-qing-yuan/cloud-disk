@@ -364,6 +364,9 @@ var render = function() {
           key: item,
           attrs: { _i: "18-" + $30 },
           on: {
+            click: function($event) {
+              return _vm.$handleViewEvent($event)
+            },
             select: function($event) {
               return _vm.$handleViewEvent($event)
             }
@@ -1538,7 +1541,15 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "v-uni-view",
-    { staticClass: _vm._$g(0, "sc"), attrs: { _i: 0 } },
+    {
+      staticClass: _vm._$g(0, "sc"),
+      attrs: { _i: 0 },
+      on: {
+        click: function($event) {
+          return _vm.$handleViewEvent($event)
+        }
+      }
+    },
     [
       _c("v-uni-text", {
         staticClass: _vm._$g(1, "sc"),
