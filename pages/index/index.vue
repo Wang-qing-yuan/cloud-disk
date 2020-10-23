@@ -8,7 +8,10 @@
 					<view class="flex align-center justify-center bg-icon rounded-circle mr-3" style="width: 60rpx; height: 60rpx;" @tap="openAddDialog">
 						<text class="iconfont icon-zengjia"></text>
 					</view>
-					<view class="flex align-center justify-center bg-icon rounded-circle mr-3" style="width: 60rpx;height: 60rpx;">
+					<view class="flex align-center justify-center bg-icon rounded-circle mr-3" 
+					style="width: 60rpx;height: 60rpx;"
+					@click="openSortDialog"
+					>
 						<text class="iconfont icon-gengduo"></text>
 					</view>
 				</template>
@@ -76,6 +79,24 @@
 				</view>
 			</view>
 		</uni-popup>
+		
+		<!-- 排序框，底部弹出，遍历排序操作数组，为当前索引项绑定文字蓝色样式 -->
+				<uni-popup ref="sort" type="bottom">
+					<view class="bg-white">
+						<view
+							v-for="(item, index) in sortOptions"
+							:key="index"
+							class="flex align-center justify-center py-3 font border-bottom border-light-secondary"
+							:class="index === sortIndex ? 'text-main' : 'text-dark'"
+							hover-class="bg-light"
+							@click="changeSort(index)"
+						>
+							{{ item.name }}
+						</view>
+					</view>
+				</uni-popup>
+				
+				
 	</view>
 </template>
 
@@ -96,6 +117,15 @@ export default {
 			renameValue: '',
 			newdirname: '',
 			title: 'Hello',
+			sortIndex: 0,
+			sortOptions: [
+							{
+								name: '按名称排序'
+							},
+							{
+								name: '按时间排序'
+							}
+						],
 			list: [
 				{
 					type: 'dir',
@@ -108,14 +138,14 @@ export default {
 					type: 'image',
 					name: '风景.jpg',
 					data: 'https://kkkksslls.oss-cn-beijing.aliyuncs.com/avatar/20200420202118.png',
-					// create_time: '2020-10-21 08:00',
+					create_time: '2020-10-21 08:00',
 					checked: false
 				},
 				{
 					type: 'video',
 					name: 'uniapp实战教程.mp4',
 					data: 'https://kkkksslls.oss-cn-beijing.aliyuncs.com/disk/%E7%90%86%E6%83%B3%E4%B8%89%E6%97%AC.mp4',
-					// create_time: '2020-10-21 08:00',
+					create_time: '2020-10-21 08:00',
 					checked: false
 				},
 				{
@@ -129,7 +159,7 @@ export default {
 					type: 'none',
 					name: '压缩包.rar',
 					data: 'https://kkkksslls.oss-cn-beijing.aliyuncs.com/campus/积分.png',
-					// create_time: '2020-10-21 08:00',
+					create_time: '2020-10-21 08:00',
 					checked: false
 				}
 			],
@@ -234,6 +264,14 @@ export default {
 		//打开添加操作条
 		openAddDialog() {
 			this.$refs.add.open();
+		},
+		// 切换排序
+		changeSort(index) {
+					this.sortIndex = index;
+					this.$refs.sort.close();
+		},
+		openSortDialog(){
+					this.$refs.sort.open();
 		},
 		//处理添加操作条的各种事件
 		handleAddEvent(item){
