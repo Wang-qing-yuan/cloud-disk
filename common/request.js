@@ -2,7 +2,7 @@ export default {
 	// 全局配置
 	common: {
 		// #ifndef H5
-		baseUrl: "https://eggtest.utools.club",
+		baseUrl: "https://eggs.utools.club",
 		// #endif
 		// #ifdef H5
 		baseUrl: "/api",
