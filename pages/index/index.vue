@@ -547,13 +547,7 @@ export default {
 			];
 		}
 	},
-	onLoad() {
-		let dirs = uni.getStorageSync('dirs');
-		if (dirs) {
-			this.dirs = JSON.parse(dirs);
-		}
-		this.getData();
-	}
+
 };
 </script>
 
