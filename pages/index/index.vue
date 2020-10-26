@@ -294,6 +294,13 @@ export default {
 						close();
 					});
 					break;
+				case '下载':
+					this.download();
+					break;
+				case '分享':
+					this.share();
+					this.handleCheckAll(false);
+					break;
 				default:
 					break;
 			}
@@ -487,6 +494,85 @@ export default {
 				.then(res => {
 					console.log(res);
 					this.getData();
+				});
+		},
+		download() {
+			this.checkList.forEach(item => {
+				if (item.isdir === 0) {
+					const key = this.getID(8);
+
+					let obj = {
+						name: item.name,
+						type: item.type,
+						size: item.size,
+						key,
+						progress: 0,
+						status: true,
+						created_time: new Date().getTime()
+					};
+
+					//创建下载任务
+					this.$store.dispatch('createDownLoadJob', obj);
+
+					let url = item.url;
+
+					let d = uni.downloadFile({
+						url,
+						success: res => {
+							if (res.statusCode === 200) {
+								console.log('下载成功', res);
+								uni.saveFile({
+									tempFilePath: item.tempFilePath
+								});
+							}
+						}
+					});
+
+					d.onProgressUpdate(res => {
+						this.$store.dispatch('updateDownLoadJob', {
+							progress: res.progress,
+							status: true,
+							key
+						});
+					});
+				}
+			});
+
+			uni.showToast({
+				title: '已加入下载列表',
+				icon: 'none'
+			});
+			this.handleCheckAll(false);
+		},
+		share() {
+			this.$H
+				.post(
+					'/share/create',
+					{
+						file_id: this.checkList[0].id
+					},
+					{ token: true }
+				)
+				.then(res => {
+					uni.showModal({
+						content: res,
+						showCancel: false,
+						success: result => {
+							//不能再用res,会和前面冲突
+							// #ifndef H5
+							uni.setClipboardData({
+								//复制到剪切板
+								data: res,
+								success: () => {
+									uni.showToast({
+										title: '复制成功',
+										icon: 'none'
+									});
+								}
+							});
+							// #endif
+						}
+					});
 				});
 		}
 	},

@@ -21,26 +21,19 @@
 		<swiper :duration="250" class="flex-1 flex" :current="tabIndex" @change="changeTab($event.detail.current)">
 			<swiper-item class="flex-1 flex" v-for="(item, index) in tabBars" :key="index">
 				<scroll-view scroll-y="true" class="flex-1">
-					
 					<!-- 下载列表 -->
 					<template v-if="index === 0">
 						<view style="height: 60rpx;" class="bg-light flex align-center font-sm px-2 text-muted">
 							文件下载至：storage/xxx/xxx
 						</view>
-					</template>
-
-					<!-- 上传列表 -->
-					<template v-else>
 						<view class="p-2 border-bottom border-light-secondary font text-muted">
-							下载中({{ uploading.length }})
+							下载中{{ downloading.length }}
 						</view>
-						<!-- 这里要注意，因为下面同级还有个f-list中绑定了key为index，会冲突，所以分别给他们加上不同的前缀区分，否则会报错 -->
-						<f-list v-for="(item, index) in uploading" :key="'i' + index" :item="item" :index="index">
+						<f-list v-for="(item, index) in downloading" :key="'i' + index" :item="item" :index="index">
 							<view style="height: 70rpx;" class="flex align-center text-main">
 								<text class="iconfont icon-zanting"></text>
-								<text class="ml-1">{{ item.progress }}%</text>
+								<text class="ml-1">{{ item.progress }}</text>
 							</view>
-							<!-- 进度条组件，uniapp自带的无需引入，percent属性绑定下载百分百数值 -->
 							<progress
 								slot="bottom"
 								:percent="item.progress"
@@ -50,15 +43,41 @@
 						</f-list>
 
 						<view class="p-2 border-bottom border-light-secondary font text-muted">
-							下载完成({{ uploaded.length }})
+							下载完成({{ downloaded.length }})
 						</view>
 						<f-list
-							v-for="(item, index) in uploaded"
+							v-for="(item, index) in downloaded"
 							:key="'d' + index"
 							:item="item"
 							:index="index"
 							:showRight="false"
 						></f-list>
+					</template>
+
+					<!-- 上传列表 -->
+					<template v-else>
+ <view class="p-2 border-bottom border-light-secondary font text-muted">
+		  				  上传中{{uploading.length}}
+		  			  </view>
+		  			  <f-list v-for="(item, index) in uploading" :key="'i' + index" :item="item" :index="index">
+		  				  <view class="flex align-center text-main" style="height: 70rpx;">
+		  					  <text class="iconfont icon-zanting"></text>
+		  					  <text class="ml-1">{{item.progress}}</text>
+		  				  </view>
+		  				  <progress slot="bottom" :percent="item.progress" activeColor="#009CFF" :stroke-width="4"></progress>
+		  			  </f-list>
+		  			  
+		  			  
+		  			  <view class="p-2 border-bottom border-light-secondary font text-muted">
+		  			    上传完成({{ uploaded.length }})
+		  			  </view>
+		  			  <f-list
+		  			    v-for="(item, index) in uploaded"
+		  			    :key="'d' + index"
+		  			    :item="item"
+		  			    :index="index"
+		  			    :showRight="false"
+		  			  ></f-list>
 					</template>
 				</scroll-view>
 			</swiper-item>
@@ -88,7 +107,8 @@ export default {
 	},
 	computed: {
 		...mapState({
-			uploadList: state => state.uploadList
+			uploadList: state => state.uploadList,
+			downlist: state => state.downlist
 		}),
 		uploading() {
 			return this.uploadList.filter(item => {
@@ -99,11 +119,35 @@ export default {
 			return this.uploadList.filter(item => {
 				return item.progress < 100;
 			});
+		},
+		downloading() {
+			return this.downlist.filter(item => {
+				return item.progress < 100;
+			});
+		},
+		downloaded() {
+			return this.downlist.filter(item => {
+				return item.progress === 100;
+			});
 		}
 	},
 	methods: {
 		changeTab(index) {
 			this.tabIndex = index;
+		},
+		onNavigationBarButtonTap() {
+			uni.showModal({
+				content: '是否要清除传输记录？',
+				success: res => {
+					if (res.confirm) {
+						this.$store.dispatch('clearList');
+						uni.showToast({
+							title: '清除成功',
+							icon: 'none'
+						});
+					}
+				}
+			});
 		}
 	}
 };

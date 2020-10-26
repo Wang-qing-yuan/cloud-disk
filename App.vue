@@ -4,9 +4,15 @@
 			console.log('App Launch')
 			// 初始化用户信息
 			this.$store.dispatch('initUser')
+			// 初始化任务列表
+			this.$store.dispatch('initList')
 		},
 		onShow: function() {
 			console.log('App Show')
+			if (this.$store.state.user) {
+				//去查看有无分享链接，这样进入页面就可以检测到是不是有粘贴过链接
+				this.$store.dispatch('getShareUrl')
+			}
 		},
 		onHide: function() {
 			console.log('App Hide')

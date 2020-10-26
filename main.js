@@ -13,10 +13,25 @@ Vue.prototype.$store = store
 
 Vue.config.productionTip = false
 
+//加一个全局的auth检测用户是否登录
+Vue.prototype.authMethod = (callback) => {
+	if (!store.state.token) {
+		uni.showToast({
+			title: '请先登录',
+			icon: 'none'
+		});
+		return uni.navigateTo({
+			url: '/pages/login/login',
+		});
+	}
+
+	callback()
+}
+
 App.mpType = 'app'
 
 const app = new Vue({
 	store,
-    ...App
+	...App
 })
 app.$mount()

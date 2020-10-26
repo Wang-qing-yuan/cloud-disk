@@ -28,12 +28,6 @@
 			<!-- <image src="../../static/right.png" mode="" style="width: 40rpx;height: 40rpx;"></image> -->
 		</view>
 		<view class="flex justify-between p-3"><text @click="logout">退出登录</text></view>
-		<view class="flex justify-between p-3"><text @click="logout">退出登录</text></view>
-			<view class="flex justify-between p-3"><text @click="logout">退出登录</text></view>
-				<view class="flex justify-between p-3"><text @click="logout">退出登录</text></view>
-					<view class="flex justify-between p-3"><text @click="logout">退出登录</text></view>
-						<view class="flex justify-between p-3"><text @click="logout">退出登录</text></view>
-							<view class="flex justify-between p-3"><text @click="logout">退出登录</text></view>
 	</view>
 </template>
 
