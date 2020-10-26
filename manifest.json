@@ -1,6 +1,6 @@
 {
     "name" : "cloud-disk",
-    "appid" : "__UNI__5DA0401",
+    "appid" : "__UNI__BDC2013",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -71,8 +71,5 @@
     },
     "mp-toutiao" : {
         "usingComponents" : true
-    },
-    "uniStatistics": {  
-        "enable": false
     }
 }

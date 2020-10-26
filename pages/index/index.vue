@@ -2,19 +2,31 @@
 	<view>
 		<!-- 自定义导航栏 -->
 		<nav-bar>
-			<template v-if="checkCount === 0">
-				<text slot="left" class="font-md ml-3">首页</text>
+			<template v-if="checkCount == 0">
+				<!-- 插槽再一次发挥逆天作用，进入子目录，左边将变成返回箭头，导航栏变成子目录名称 -->
+				<template slot="left">
+					<view
+						style="width: 60rpx;height: 60rpx;"
+						class="flex align-center justify-center bg-light rounded-circle ml-3"
+						hover-class="bg-hover-light"
+						@tap="backUp"
+						v-if="current"
+					>
+						<text class="iconfont icon-fanhui"></text>
+					</view>
+					<text class="font-md ml-3">{{ current ? current.name : '首页' }}</text>
+				</template>
 				<template slot="right">
 					<view
-						class="flex align-center justify-center bg-icon rounded-circle mr-3"
 						style="width: 60rpx; height: 60rpx;"
+						class="flex align-center justify-center bg-icon rounded-circle mr-3"
 						@tap="openAddDialog"
 					>
 						<text class="iconfont icon-zengjia"></text>
 					</view>
 					<view
+						style="width: 60rpx; height: 60rpx;"
 						class="flex align-center justify-center bg-icon rounded-circle mr-3"
-						style="width: 60rpx;height: 60rpx;"
 						@click="openSortDialog"
 					>
 						<text class="iconfont icon-gengduo"></text>
@@ -24,42 +36,51 @@
 
 			<template v-else>
 				<view slot="left" class="font-md ml-3 text-primary" @click="handleCheckAll(false)">取消</view>
-				<view class="font-md font-weight-bold">已选中{{ checkCount }}</view>
-				<view slot="right" class="font-md mr-3 text-primary" @click="handleCheckAll(true)">全选</view>
+				<view class="font-md font-weight-bold">已选中{{ checkCount }}个</view>
+				<view slot="right" class="font-md ml-3 text-primary" @click="handleCheckAll(true)">全选</view>
 			</template>
 		</nav-bar>
-		<view class="px-3 py-2">
-			<view class="position-relative">
-				<view
-					class="flex align-center justify-center text-light-muted"
-					style="width: 70rpx;height: 70rpx;position: absolute;top: 0;left: 0;"
-				>
-					<text class="iconfont icon-sousuo"></text>
-				</view>
-				<!-- <uni-search-bar :radius="20"  placeholder="搜索网盘文件" @confirm="search" cancelButton="none"></uni-search-bar> -->
-				<input
-					style="height: 70rpx;padding-left: 70rpx;"
-					type="text"
-					class="bg-light font-md rounded-circle"
-					placeholder="搜索网盘文件"
-				/>
-			</view>
-		</view>
+		<view style="height: 1000px;">
+			<!-- 搜索框，设置圆角 -->
+			<!-- <uni-search-bar :radius="100" ></uni-search-bar> -->
 
-		<f-list
-			v-for="(item, index) in list"
-			:key="index"
-			:item="item"
-			@click="doEvent(item)"
-			:index="index"
-			@select="select"
-		></f-list>
+			<!-- 搜索框 -->
+			<view class="px-3 py-2">
+				<view class="position-relative">
+					<view
+						style="height: 70rpx;width: 70rpx;position: absolute;top: 0;left: 0;"
+						class="flex align-center justify-center text-light-muted"
+					>
+						<text class="iconfont icon-sousuo"></text>
+					</view>
+					<input
+						style="height: 70rpx;padding-left: 70rpx;"
+						type="text"
+						class="bg-light font-md rounded-circle"
+						placeholder="搜索网盘文件"
+						@input="search"
+					/>
+				</view>
+			</view>
+			<!-- 列表 -->
+			<f-list
+				v-for="(item, index) in list"
+				:key="index"
+				:item="item"
+				@click="doEvent(item)"
+				:index="index"
+				@select="select"
+			></f-list>
+		</view>
 
 		<!-- 底部操作条 -->
 		<!-- 选中个数大于0才会出现这个操作条 -->
 		<view v-if="checkCount > 0">
+			<!-- 这里要留一定的高度，因为底部操作条需要被固定在底部，并空出底部tabbar高度的地方 -->
 			<view style="height: 115rpx;"></view>
-			<view style="height: 115rpx;" class="flex align-stretch bg-primary text-white fixed-bottom">
+			<!-- 操作条容器的样式，高度，颜色，固定在底部，垂直方向拉升效果 -->
+			<view style="115rpx" class="flex align-stretch bg-primary text-white fixed-bottom">
+				<!-- 根据元素个数等分容器，所以要么四个等分，要么两个等分，行高的修改可以让图标和文字之间的距离变得合理，点击还会变色:hover-class -->
 				<view
 					class="flex-1 flex flex-column align-center justify-center"
 					style="line-height: 1.5;"
@@ -74,8 +95,8 @@
 			</view>
 		</view>
 
-		<!-- 是否要删除，通过ref指定为delete对话框？ -->
-		<f-dialog ref="dialog">是否删除选中文件？</f-dialog>
+		<!-- 是否要删除 -->
+		<f-dialog ref="delete">是否删除选中的文件？</f-dialog>
 
 		<!-- 重命名，通过ref定义不同的对话框对象，不同操作弹出的dialog是不同的对象 -->
 		<f-dialog ref="rename">
@@ -98,7 +119,6 @@
 				placeholder="新建文件夹名称"
 			/>
 		</f-dialog>
-
 		<!-- 添加操作条，应当能理解这里ref的作用了，type表示弹出层的位置类型，具体取值都在popup子组件中 -->
 		<uni-popup ref="add" type="bottom">
 			<view class="bg-white flex" style="height: 200rpx;">
@@ -121,7 +141,6 @@
 				</view>
 			</view>
 		</uni-popup>
-
 		<!-- 排序框，底部弹出，遍历排序操作数组，为当前索引项绑定文字蓝色样式 -->
 		<uni-popup ref="sort" type="bottom">
 			<view class="bg-white">
@@ -141,12 +160,14 @@
 </template>
 
 <script>
+import uniSearchBar from '@/components/uni-ui/uni-search-bar/uni-search-bar.vue';
 import navBar from '@/components/common/nav-bar.vue';
 import fList from '@/components/common/f-list.vue';
 import fDialog from '@/components/common/f-dialog.vue';
 import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue';
 export default {
 	components: {
+		uniSearchBar,
 		navBar,
 		fList,
 		fDialog,
@@ -156,19 +177,19 @@ export default {
 		return {
 			renameValue: '',
 			newdirname: '',
-			title: 'Hello',
+			dirs: [],
 			sortIndex: 0,
 			sortOptions: [
 				{
-					name: '按名称排序'
+					name: '按名称排序',
+					key: 'name'
 				},
 				{
-					name: '按时间排序'
+					name: '按时间排序',
+					key: 'created_time'
 				}
 			],
-			list: [
-				
-			],
+			list: [],
 			addList: [
 				{
 					icon: 'icon-file-b-6',
@@ -193,17 +214,186 @@ export default {
 			]
 		};
 	},
-	onLoad() {
-		// uni.request({
-		// 	url: 'http://localhost:7001/list',
-		// 	method: 'GET',
-		// 	success: res => {
-		// 		console.log(res.data);
-		// 	}
-		// });
-		this.getData();
-	},
 	methods: {
+		select(e) {
+			this.list[e.index].checked = e.value;
+		},
+		//全选/取消全选
+		handleCheckAll(checked) {
+			this.list.forEach(item => {
+				item.checked = checked;
+			});
+		},
+		//处理底部操作时间
+		handleBottomEvent(item) {
+			switch (item.name) {
+				case '删除':
+					this.$refs.delete.open(close => {
+						//加载框过渡下
+						uni.showLoading({
+							title: '删除中...',
+							mask: false
+						});
+						let ids = this.checkList.map(item => item.id).join(',');
+						this.$H
+							.post(
+								'/file/delete',
+								{
+									ids
+								},
+								{ token: true }
+							)
+							.then(res => {
+								this.getData();
+								uni.showToast({
+									title: '删除成功',
+									icon: 'none'
+								});
+								uni.hideLoading();
+							})
+							.catch(err => {
+								uni.hideLoading();
+							});
+						//对List进行过滤，留下未被选中的
+						//this.list = this.list.filter(item => !item.checked);
+						close();
+						uni.showToast({
+							title: '删除成功',
+							icon: 'none'
+						});
+					});
+					break;
+				case '重命名':
+					//只能对单个文件进行，所以取this.checkList[0],也就是选中的唯一元素
+					this.renameValue = this.checkList[0].name;
+					this.$refs.rename.open(close => {
+						if (this.renameValue == '') {
+							return uni.showToast({
+								title: '文件名称不能为空',
+								icon: 'none'
+							});
+						}
+						console.log(this.checkList[0].id + '>>>>>>>>' + this.file_id);
+						this.$H
+							.post(
+								'/file/rename',
+								{
+									id: this.checkList[0].id,
+									file_id: this.file_id,
+									name: this.renameValue
+								},
+								{ token: true }
+							)
+							.then(res => {
+								this.checkList[0].name = this.renameValue;
+								uni.showToast({
+									title: '重命名成功',
+									icon: 'none'
+								});
+							});
+						close();
+					});
+					break;
+				default:
+					break;
+			}
+		},
+		//打开添加操作条
+		openAddDialog() {
+			this.$refs.add.open();
+		},
+		handleAddEvent(item) {
+			this.$refs.add.close();
+			switch (item.name) {
+				case '上传图片':
+					uni.chooseImage({
+						count: 9,
+						success: res => {
+							// 选择图片成功，就循环异步调用上传接口
+							res.tempFiles.forEach(item => {
+								this.upload(item, 'image');
+							});
+						}
+					});
+					break;
+				case '新建文件夹':
+					this.$refs.newdir.open(close => {
+						if (this.newdirname == '') {
+							return uni.showToast({
+								title: '文件夹名称不能为空',
+								icon: 'none'
+							});
+						}
+						//模拟请求服务器，这里先增加到List数组中
+						this.$H
+							.post(
+								'/file/createdir',
+								{
+									file_id: this.file_id,
+									name: this.newdirname
+								},
+								{ token: true }
+							)
+							.then(res => {
+								this.getData();
+								uni.showToast({
+									title: '新建文件夹成功',
+									icon: 'none'
+								});
+							});
+
+						close();
+						this.newdirname = '';
+					});
+					break;
+
+				default:
+					break;
+			}
+		},
+		doEvent(item) {
+			switch (item.type) {
+				case 'image':
+					let images = this.list.filter(item => {
+						return item.type === 'image';
+					});
+					uni.previewImage({
+						current: item.url,
+						urls: images.map(item => item.url)
+					});
+					break;
+
+				case 'video':
+					uni.navigateTo({
+						url: '../video/video?url=' + item.url + '&title=' + item.name
+					});
+					break;
+				default:
+					this.dirs.push({
+						id: item.id,
+						name: item.name
+					});
+					this.getData();
+					uni.setStorage({
+						key: 'dirs',
+						data: JSON.stringify(this.dirs)
+					});
+					break;
+			}
+		},
+		//根据排序类型的索引切换不同的排序，关闭sort排序框
+		changeSort(index) {
+			// this.sortIndex = index;
+			// this.$refs.sort.close();
+			this.sortIndex = index;
+			this.getData();
+			this.$refs.sort.close();
+		},
+		//打开sort排序框
+		openSortDialog() {
+			this.$refs.sort.open();
+		},
+		//将数据格式化为需要显示的样子
 		formatList(list) {
 			return list.map(item => {
 				let type = 'none';
@@ -220,8 +410,11 @@ export default {
 			});
 		},
 		getData() {
+			console.log(this.file_id + '>>>>>>>>');
+			let orderby = this.sortOptions[this.sortIndex].key;
+			console.log(orderby + '&&&&&');
 			this.$H
-				.get('/file?file_id=0', {
+				.get(`/file?file_id=${this.file_id}&orderby=${orderby}`, {
 					token: true
 				})
 				.then(res => {
@@ -229,120 +422,98 @@ export default {
 					this.list = this.formatList(res.rows);
 				});
 		},
-		// 列表点击事件处理
-		doEvent(item) {
-			switch (item.type) {
-				case 'image': //预览图片
-					let images = this.list.filter(item => {
-						return item.type === 'image';
-					});
-					uni.previewImage({
-						current: item.url,
-						urls: images.map(item => item.url)
-					});
-					break;
-				case 'video':
-					uni.navigateTo({
-						url: '../video/video?url=' + item.url + '&title=' + item.name
-					});
-					break;
-				default:
-					break;
-			}
-		},
-		select(e) {
-			this.list[e.index].checked = e.value;
-		},
-		handleCheckAll(checked) {
-			this.list.forEach(item => {
-				item.checked = checked;
+		backUp() {
+			this.dirs.pop();
+			this.getData();
+			uni.setStorage({
+				key: 'dirs',
+				data: JSON.stringify(this.dirs)
 			});
 		},
-		//处理底部操作条事件
-		handleBottomEvent(item) {
-			switch (item.name) {
-				case '删除':
-					this.$refs.dialog.open(close => {
-						//对list进行过滤，留下来的未被选中的
-						this.list = this.list.filter(item => !item.checked);
-						close();
-						uni.showToast({
-							title: '删除成功',
-							icon: 'none'
-						});
-						// console.log('删除文件');
-						// console.log(this.checkList);
-					});
-					break;
-				case '重命名':
-					//重命名只能对单个文件进行，所以取this.checkList[0],也就是选中的唯一元素
-					this.renameValue = this.checkList[0].name;
-					this.$refs.rename.open(close => {
-						if (this.renameValue == '') {
-							return uni.showToast({
-								title: '文件名称不能为空',
-								icon: 'none'
-							});
-						}
-						//更新钙元素的name值，实时看到效果
-						this.checkList[0].name = this.renameValue;
-						close();
-					});
-					break;
-				default:
-					break;
+		search(e) {
+			if (e.detail.value == '') {
+				return this.getData();
 			}
+			this.$H
+				.get('/file/search?keyword=' + e.detail.value, {
+					token: true
+				})
+				.then(res => {
+					this.list = this.formatList(res.rows);
+				});
 		},
-		//打开添加操作条
-		openAddDialog() {
-			this.$refs.add.open();
+		//生成唯一ID
+		getID(length) {
+			return Number(
+				Math.random()
+					.toString()
+					.substr(3, length) + Date.now()
+			).toString(36);
 		},
-		// 切换排序
-		changeSort(index) {
-			this.sortIndex = index;
-			this.$refs.sort.close();
-		},
-		openSortDialog() {
-			this.$refs.sort.open();
-		},
-		//处理添加操作条的各种事件
-		handleAddEvent(item) {
-			this.$refs.add.close();
-			switch (item.name) {
-				case '新建文件夹':
-					this.$refs.newdir.open(close => {
-						if (this.newdirname == '') {
-							return uni.showToast({
-								title: '文件夹名称不能为空',
-								icon: 'none'
-							});
-						}
-						//模拟请求服务器，这里先增加到list数组中
-						this.list.push({
-							type: 'dir',
-							name: this.newdirname,
-							create_time: '2020-10-22 17:00',
-							checked: false
+		//上传
+		upload(file, type) {
+			//上传文件的类型
+			let t = type;
+			//上传的key，用来区分每个文件
+			const key = this.getID(8);
+			//构建上传文件的对象
+			let obj = {
+				name: file.name,
+				type: t,
+				size: file.size,
+				key,
+				progress: 0,
+				status: true,
+				create_time: new Date().getTime()
+			};
+			//创建上传任务，分发给Vuex的Actions，异步上传调度。主要是实现上传的进度的回调
+			this.$store.dispatch('createUploadJob', obj);
+			//上传、查询参数为当前位置所在目录的id，body参数为文件路径
+			this.$H
+				.upload(
+					'/upload?file_id=' + this.file_id,
+					{
+						filePath: file.path
+					},
+					p => {
+						//更新上传任务进度
+						this.$store.dispatch('updateUploadJob', {
+							status: true,
+							progress: p,
+							key
 						});
-						uni.showToast({
-							title: '新建文件夹成功',
-							icon: 'none'
-						});
-						close();
-					});
-					break;
-				default:
-					break;
-			}
+					}
+				)
+				.then(res => {
+					console.log(res);
+					this.getData();
+				});
 		}
 	},
 	computed: {
+		file_id() {
+			let l = this.dirs.length;
+			if (l === 0) {
+				return 0;
+			}
+			return this.dirs[l - 1].id;
+		},
+		current() {
+			let l = this.dirs.length;
+			if (l === 0) {
+				return false;
+			}
+			return this.dirs[l - 1];
+		},
+		//选中列表
 		checkList() {
 			return this.list.filter(item => item.checked);
 		},
+		//选中数量
 		checkCount() {
 			return this.checkList.length;
 		},
+		//操作菜单
 		actions() {
 			if (this.checkCount > 1) {
 				return [
@@ -375,6 +546,13 @@ export default {
 				}
 			];
 		}
+	},
+	onLoad() {
+		let dirs = uni.getStorageSync('dirs');
+		if (dirs) {
+			this.dirs = JSON.parse(dirs);
+		}
+		this.getData();
 	}
 };
 </script>
