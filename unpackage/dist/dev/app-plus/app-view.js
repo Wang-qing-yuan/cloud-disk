@@ -3547,6 +3547,63 @@ var render = function() {
           )
         ],
         1
+      ),
+      _c(
+        "v-uni-view",
+        { staticClass: _vm._$g(18, "sc"), attrs: { _i: 18 } },
+        [
+          _c(
+            "v-uni-text",
+            {
+              attrs: { _i: 19 },
+              on: {
+                click: function($event) {
+                  return _vm.$handleViewEvent($event)
+                }
+              }
+            },
+            [_vm._v("退出登录")]
+          )
+        ],
+        1
+      ),
+      _c(
+        "v-uni-view",
+        { staticClass: _vm._$g(20, "sc"), attrs: { _i: 20 } },
+        [
+          _c(
+            "v-uni-text",
+            {
+              attrs: { _i: 21 },
+              on: {
+                click: function($event) {
+                  return _vm.$handleViewEvent($event)
+                }
+              }
+            },
+            [_vm._v("退出登录")]
+          )
+        ],
+        1
+      ),
+      _c(
+        "v-uni-view",
+        { staticClass: _vm._$g(22, "sc"), attrs: { _i: 22 } },
+        [
+          _c(
+            "v-uni-text",
+            {
+              attrs: { _i: 23 },
+              on: {
+                click: function($event) {
+                  return _vm.$handleViewEvent($event)
+                }
+              }
+            },
+            [_vm._v("退出登录")]
+          )
+        ],
+        1
       )
     ],
     1
