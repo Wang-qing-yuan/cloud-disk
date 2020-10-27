@@ -71,7 +71,7 @@ export default new Vuex.Store({
 			//异步设置本地存储，记录键值对为：上传人和上传内容
 			uni.setStorage({
 				key: "uploadList_" + state.user.id,
-				dadt: JSON.stringify(state.uploadList)
+				data: JSON.stringify(state.uploadList)
 			})
 		},
 		//更新上传任务进度
